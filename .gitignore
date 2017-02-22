@@ -94,6 +94,7 @@ ENV/
 .ropeproject
 
 # My ignore
-django_blog/
+django_awesome
 *.sqlite3
 .idea
+.coverage
