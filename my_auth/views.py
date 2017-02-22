@@ -2,13 +2,10 @@ from django.shortcuts import render
 
 
 # Create your views here.
-def index(request):
+
+def login(request):
     pass
 
 
-def blog(request):
-    pass
-
-
-def blog_list(request):
+def register(request):
     pass

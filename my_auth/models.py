@@ -4,6 +4,18 @@ from django.db import models
 # Create your models here.
 
 
+class Tokens(models.Model):
+    cookie = models.CharField(max_length=100)
+    created_at = models.DateTimeField('date created')
+    expire_at = models.DateTimeField('date expired')
+    user_id = models.IntegerField()
+
+    def __str__(self):
+        return self.user
+
+    __repr__ = __str__
+
+
 class Users(models.Model):
     name = models.CharField(max_length=50)
     email = models.CharField(max_length=50, unique=True)
@@ -16,16 +28,5 @@ class Users(models.Model):
 
     def __str__(self):
         return self.name
-
-    __repr__ = __str__
-
-
-class Tokens(models.Model):
-    created_at = models.DateTimeField('date created')
-    expire_at = models.DateTimeField('date expired')
-    user = models.ForeignKey(Users, on_delete=models.PROTECT)
-
-    def __str__(self):
-        return self.user.name
 
     __repr__ = __str__

@@ -2,7 +2,7 @@ import sys
 from django.db import models
 
 sys.path.append('../')
-auth = __import__('auth', globals(), locals())
+auth = __import__('my_auth', globals(), locals())
 
 
 # Create your models here.
