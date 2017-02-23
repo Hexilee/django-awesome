@@ -5,13 +5,13 @@ from django.db import models
 
 
 class Tokens(models.Model):
-    cookie = models.CharField(max_length=100)
+    value = models.CharField(max_length=100)
     created_at = models.DateTimeField('date created')
     expire_at = models.DateTimeField('date expired')
     user_email = models.CharField(max_length=50)
 
     def __str__(self):
-        return self.cookie
+        return self.value
 
     __repr__ = __str__
 

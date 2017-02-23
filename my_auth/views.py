@@ -7,7 +7,7 @@ import datetime
 
 # Create your views here.
 
-def cookie_generator(password):
+def token_generator(password):
     raw = '%s:%s:%s' % (password, str(timezone.now()), SECRET_KEY)
     return hashlib.sha1(raw.encode('utf-8')).hexdigest()
 

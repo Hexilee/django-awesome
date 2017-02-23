@@ -17,7 +17,7 @@ class BlogsAndCommentsModelsTest(TestCase):
         token = auth.models.Tokens(created_at=timezone.now(),
                                    expire_at=timezone.now() + datetime.timedelta(hours=EXPIRE_TIME),
                                    user_email=test_email,
-                                   cookie='cookie')
+                                   value='cookie')
         token.save()
 
         user = auth.models.Users(name='name', email=test_email, password='password', created_at=timezone.now(),
