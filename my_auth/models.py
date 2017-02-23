@@ -11,7 +11,7 @@ class Tokens(models.Model):
     user_email = models.CharField(max_length=50)
 
     def __str__(self):
-        return self.user_email
+        return self.cookie
 
     __repr__ = __str__
 
