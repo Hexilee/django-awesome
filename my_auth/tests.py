@@ -82,6 +82,8 @@ class BasicMiddlewareTest(TestCase):
 
 
 # test objects for AuthMiddlewareTest ##################################################################################
+
+
 def test_email(num):
     return 'test%d@example.com' % num
 
@@ -103,8 +105,10 @@ test_auth_middleware = AuthMiddleware(test_function)
 
 
 # test objects end #####################################################################################################
-class AuthMiddlewareTest(TestCase):
-    def auth_middleware_output_test1(self):
+
+
+class MyAuthMiddlewareTest(TestCase):
+    def test_auth_middleware_output_test1(self):
         # test1, has no token
         test1_token = Tokens(created_at=timezone.now(),
                              expire_at=timezone.now() + datetime.timedelta(hours=EXPIRE_TIME),
@@ -121,7 +125,7 @@ class AuthMiddlewareTest(TestCase):
         self.assertEqual(request1.__user__, None)
         self.assertEqual(request1.auth_error, '你还没登录呢~请登录')
 
-    def auth_middleware_output_test2(self):
+    def test_auth_middleware_output_test2(self):
         # test2, token is invalid
         test2_token = Tokens(created_at=timezone.now(),
                              expire_at=timezone.now() + datetime.timedelta(hours=EXPIRE_TIME),
@@ -139,7 +143,7 @@ class AuthMiddlewareTest(TestCase):
         self.assertEqual(request2.__user__, None)
         self.assertEqual(request2.auth_error, '登录已过期，请重新登录!')
 
-    def auth_middleware_output_test3(self):
+    def test_auth_middleware_output_test3(self):
         # test3, token is expired
         test3_token = Tokens(created_at=timezone.now() - datetime.timedelta(hours=EXPIRE_TIME),
                              expire_at=timezone.now() - datetime.timedelta(seconds=1),
@@ -157,6 +161,85 @@ class AuthMiddlewareTest(TestCase):
         self.assertEqual(request3.__user__, None)
         self.assertEqual(request3.auth_error, '登录已过期，请重新登录')
 
+    def test_auth_middleware_output_test4(self):
+        # test4, user_email is invalid
+        test4_token = Tokens(created_at=timezone.now(),
+                             expire_at=timezone.now() + datetime.timedelta(hours=EXPIRE_TIME),
+                             user_email=test_email(3),
+                             value=token_generator('password4'))
+        test4_token.save()
+
+        test4_user = test_generate_new_user(test4_token, 4)
+        test4_user.save()
+
+        request4 = TestAuthHttpRequest()
+        request4.cookies[TOKEN_NAME] = test4_token.value
+        test_auth_middleware(request4)
+
+        self.assertEqual(request4.__user__, None)
+        self.assertEqual(request4.auth_error, '此账号不存在或账号邮箱已更改')
+
+    def test_auth_middleware_output_test5(self):
+        # test5, user is not active
+        test5_token = Tokens(created_at=timezone.now(),
+                             expire_at=timezone.now() + datetime.timedelta(hours=EXPIRE_TIME),
+                             user_email=test_email(5),
+                             value=token_generator('password5'))
+        test5_token.save()
+
+        test5_user = test_generate_new_user(test5_token, 5)
+        test5_user.is_active = False
+        test5_user.save()
+
+        request5 = TestAuthHttpRequest()
+        request5.cookies[TOKEN_NAME] = test5_token.value
+        test_auth_middleware(request5)
+
+        self.assertEqual(request5.__user__, None)
+        self.assertEqual(request5.auth_error, '此账号已经冻结')
+
+    def test_auth_middleware_output_test6(self):
+        # test6, user.current_token != token
+        test6_token = Tokens(created_at=timezone.now(),
+                             expire_at=timezone.now() + datetime.timedelta(hours=EXPIRE_TIME),
+                             user_email=test_email(6),
+                             value=token_generator('password6'))
+        test6_token.save()
+        #
+        test6_changed_token = Tokens(created_at=timezone.now(),
+                                     expire_at=timezone.now() + datetime.timedelta(hours=EXPIRE_TIME),
+                                     user_email=test_email(6),
+                                     value=token_generator('password6_changed'))
+        test6_changed_token.save()  # 不存储则测试报错
+
+        test6_user = test_generate_new_user(test6_changed_token, 6)
+        test6_user.save()
+
+        request6 = TestAuthHttpRequest()
+        request6.cookies[TOKEN_NAME] = test6_token.value
+        test_auth_middleware(request6)
+
+        self.assertEqual(request6.__user__, None)
+        self.assertEqual(request6.auth_error, '你的账号已在别处登录')
+
+    def test_auth_middleware_output_test7(self):
+        # test6, valid user
+        test7_token = Tokens(created_at=timezone.now(),
+                             expire_at=timezone.now() + datetime.timedelta(hours=EXPIRE_TIME),
+                             user_email=test_email(7),
+                             value=token_generator('password7'))
+        test7_token.save()
+
+        test7_user = test_generate_new_user(test7_token, 7)
+        test7_user.save()
+
+        request7 = TestAuthHttpRequest()
+        request7.cookies[TOKEN_NAME] = test7_token.value
+        test_auth_middleware(request7)
+
+        self.assertEqual(request7.auth_error, None)
+        self.assertEqual(request7.__user__.email, test7_user.email)
+        self.assertEqual(request7.__user__.password, '**********')
 
 
 class LoginViewTest(TestCase):
