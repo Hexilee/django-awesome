@@ -10,5 +10,6 @@ def blog(request):
     pass
 
 
-def blog_list(request):
+def api_blog_list(request):
     pass
+

@@ -18,3 +18,6 @@ def login(request):
 
 def register(request):
     pass
+
+def logout(request):
+    pass
