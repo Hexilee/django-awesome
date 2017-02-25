@@ -7,7 +7,7 @@ import hashlib
 import time
 import json
 # Create your tests here.
-from django_awesome.settings import EXPIRE_TIME
+from django_awesome.settings import EXPIRED_TIME
 from .models import auth, Blogs, Comments
 from .templatetags.blog_filter import datetime_filter
 from .utilities import Page, get_page_index
@@ -21,7 +21,7 @@ class BlogsAndCommentsModelsTest(TestCase):
         test_email = 'name@example.com'
 
         token = auth.models.Tokens(created_at=timezone.now(),
-                                   expire_at=timezone.now() + datetime.timedelta(hours=EXPIRE_TIME),
+                                   expired_at=timezone.now() + datetime.timedelta(hours=EXPIRED_TIME),
                                    user_email=test_email,
                                    value='cookie')
         token.save()
@@ -88,7 +88,7 @@ class IndexViewTest(TestCase):
         self.assertEqual(page, {'ceiling': 8,
                                 'has_next': True,
                                 'has_previous': False,
-                                'item_count': 10,
+                                'item_count': 9,
                                 'offset': 0,
                                 'page_count': 2,
                                 'page_index': 1,

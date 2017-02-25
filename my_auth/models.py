@@ -7,7 +7,7 @@ from django.db import models
 class Tokens(models.Model):
     value = models.CharField(max_length=100)
     created_at = models.DateTimeField('date created')
-    expire_at = models.DateTimeField('date expired')
+    expired_at = models.DateTimeField('date expired')
     user_email = models.CharField(max_length=50)
 
     def __str__(self):

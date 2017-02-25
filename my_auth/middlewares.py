@@ -44,7 +44,7 @@ class AuthMiddleware(BasicMiddleware):
             if not len(tokens) == 0:
                 token = tokens[0]
                 # if token is expired
-                if token.expire_at >= timezone.now() >= token.created_at:
+                if token.expired_at >= timezone.now() >= token.created_at:
                     users = models.Users.objects.filter(email=token.user_email)
                     # if token.user_email is valid
                     if not len(users) == 0:

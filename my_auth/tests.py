@@ -9,14 +9,14 @@ import hashlib
 from .utilites import token_generator
 from .models import Users, Tokens
 from .middlewares import BasicMiddleware, AuthMiddleware
-from django_awesome.settings import EXPIRE_TIME, TOKEN_NAME
+from django_awesome.settings import EXPIRED_TIME, TOKEN_NAME
 
 
 class UsersAndTokensModelsTest(TestCase):
     def test_user_and_token(self):
         test_email = 'name@example.com'
         token = Tokens(created_at=timezone.now(),
-                       expire_at=timezone.now() + datetime.timedelta(hours=EXPIRE_TIME),
+                       expired_at=timezone.now() + datetime.timedelta(hours=EXPIRED_TIME),
                        user_email=test_email,
                        value=token_generator('password'))
         token.save()
@@ -111,7 +111,7 @@ class MyAuthMiddlewareTest(TestCase):
     def test_auth_middleware_output_test1(self):
         # test1, has no token
         test1_token = Tokens(created_at=timezone.now(),
-                             expire_at=timezone.now() + datetime.timedelta(hours=EXPIRE_TIME),
+                             expired_at=timezone.now() + datetime.timedelta(hours=EXPIRED_TIME),
                              user_email=test_email(1),
                              value=token_generator('password1'))
         test1_token.save()
@@ -128,7 +128,7 @@ class MyAuthMiddlewareTest(TestCase):
     def test_auth_middleware_output_test2(self):
         # test2, token is invalid
         test2_token = Tokens(created_at=timezone.now(),
-                             expire_at=timezone.now() + datetime.timedelta(hours=EXPIRE_TIME),
+                             expired_at=timezone.now() + datetime.timedelta(hours=EXPIRED_TIME),
                              user_email=test_email(2),
                              value=token_generator('password2'))
         test2_token.save()
@@ -145,8 +145,8 @@ class MyAuthMiddlewareTest(TestCase):
 
     def test_auth_middleware_output_test3(self):
         # test3, token is expired
-        test3_token = Tokens(created_at=timezone.now() - datetime.timedelta(hours=EXPIRE_TIME),
-                             expire_at=timezone.now() - datetime.timedelta(seconds=1),
+        test3_token = Tokens(created_at=timezone.now() - datetime.timedelta(hours=EXPIRED_TIME),
+                             expired_at=timezone.now() - datetime.timedelta(seconds=1),
                              user_email=test_email(3),
                              value=token_generator('password3'))
         test3_token.save()
@@ -164,7 +164,7 @@ class MyAuthMiddlewareTest(TestCase):
     def test_auth_middleware_output_test4(self):
         # test4, user_email is invalid
         test4_token = Tokens(created_at=timezone.now(),
-                             expire_at=timezone.now() + datetime.timedelta(hours=EXPIRE_TIME),
+                             expired_at=timezone.now() + datetime.timedelta(hours=EXPIRED_TIME),
                              user_email=test_email(3),
                              value=token_generator('password4'))
         test4_token.save()
@@ -182,7 +182,7 @@ class MyAuthMiddlewareTest(TestCase):
     def test_auth_middleware_output_test5(self):
         # test5, user is not active
         test5_token = Tokens(created_at=timezone.now(),
-                             expire_at=timezone.now() + datetime.timedelta(hours=EXPIRE_TIME),
+                             expired_at=timezone.now() + datetime.timedelta(hours=EXPIRED_TIME),
                              user_email=test_email(5),
                              value=token_generator('password5'))
         test5_token.save()
@@ -201,13 +201,13 @@ class MyAuthMiddlewareTest(TestCase):
     def test_auth_middleware_output_test6(self):
         # test6, user.current_token != token
         test6_token = Tokens(created_at=timezone.now(),
-                             expire_at=timezone.now() + datetime.timedelta(hours=EXPIRE_TIME),
+                             expired_at=timezone.now() + datetime.timedelta(hours=EXPIRED_TIME),
                              user_email=test_email(6),
                              value=token_generator('password6'))
         test6_token.save()
         #
         test6_changed_token = Tokens(created_at=timezone.now(),
-                                     expire_at=timezone.now() + datetime.timedelta(hours=EXPIRE_TIME),
+                                     expired_at=timezone.now() + datetime.timedelta(hours=EXPIRED_TIME),
                                      user_email=test_email(6),
                                      value=token_generator('password6_changed'))
         test6_changed_token.save()  # 不存储则测试报错
@@ -225,7 +225,7 @@ class MyAuthMiddlewareTest(TestCase):
     def test_auth_middleware_output_test7(self):
         # test6, valid user
         test7_token = Tokens(created_at=timezone.now(),
-                             expire_at=timezone.now() + datetime.timedelta(hours=EXPIRE_TIME),
+                             expired_at=timezone.now() + datetime.timedelta(hours=EXPIRED_TIME),
                              user_email=test_email(7),
                              value=token_generator('password7'))
         test7_token.save()
