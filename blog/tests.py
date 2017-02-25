@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.utils import timezone
 from django.core.urlresolvers import reverse
 from django.core import serializers
+from django.http import HttpRequest
 import datetime
 import hashlib
 import time
@@ -50,7 +51,7 @@ class BlogsAndCommentsModelsTest(TestCase):
 class IndexViewTest(TestCase):
     def test_index_view_1(self):
         # test1, no item
-        response = self.client.get('/blog/')
+        response = self.client.get(reverse('blog:index'))
         self.assertEqual(response.status_code, 200)
 
         resp_dict = response.context
@@ -79,7 +80,7 @@ class IndexViewTest(TestCase):
         for i in range(9):
             Blogs.objects.create(user=test_user, name='test', summary='test', content='test', created_at=timezone.now())
         ############################################################
-        response = self.client.get('/blog/')
+        response = self.client.get(reverse('blog:index'))
         self.assertEqual(response.status_code, 200)
 
         resp_dict = response.context
@@ -94,10 +95,49 @@ class IndexViewTest(TestCase):
                                 'page_index': 1,
                                 'page_size': 8})
 
+        # test3, items, 'page' parm
+        response = self.client.get(reverse('blog:index') + '?page=2')
+        self.assertEqual(response.status_code, 200)
+
+        resp_dict = response.context
+
+        page = json.loads(resp_dict['page'])
+        self.assertEqual(page, {'ceiling': 9,
+                                'has_next': False,
+                                'has_previous': True,
+                                'item_count': 9,
+                                'offset': 8,
+                                'page_count': 2,
+                                'page_index': 2,
+                                'page_size': 8})
+
 
 class BlogViewTest(TestCase):
-    def test_blog_status_code(self):
-        pass
+    def test_get_blog_view(self):
+        # create blogs
+        test_token = auth.models.Tokens(created_at=timezone.now(), expired_at=timezone.now(), user_email='email',
+                                        value='value')
+        test_token.save()
+
+        test_user = auth.models.Users(name='Robot', email='email', password='test', created_at=timezone.now(),
+                                      image='image',
+                                      current_token=test_token)
+        test_user.save()
+
+        test_blog = Blogs(user=test_user, name='test', summary='test', content='test', created_at=timezone.now())
+        test_blog.save()
+
+        # test1, no comment
+        response1 = self.client.get(reverse('blog:blog', args=(test_blog.pk, )))
+        resp_dict = response1.context
+        self.assertEqual(resp_dict['comments'], None)
+
+        # test2, a comment
+        test_comment = Comments(user=test_user, blog=test_blog, content='test', created_at=timezone.now())
+        test_comment.save()
+        response2 = self.client.get(reverse('blog:blog', args=(test_blog.pk, )))
+        resp_dict = response2.context
+        self.assertEqual(resp_dict['comments'][0], test_comment)
 
 
 class BlogListViewTest(TestCase):
