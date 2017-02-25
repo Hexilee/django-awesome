@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 import datetime
 import hashlib
 import time
+
 # Create your tests here.
 from django_awesome.settings import EXPIRE_TIME
 from .models import auth, Blogs, Comments
@@ -60,13 +61,13 @@ class BlogListViewTest(TestCase):
 
 
 # test objects for DatetimeFilterTest ##################################################################################
-def test_raw_time_generator(test_second):
-    raw_time_now = int(time.time())
-    return raw_time_now - test_second
+def test_date_time_generator(test_second):
+    date_time_now = timezone.now()
+    return date_time_now - datetime.timedelta(seconds=test_second)
 
 
 def test_differ_seconds_now_from_then(time_then):
-    return int(time.time()) - time_then
+    return int(time.time()) - int(time_then.timestamp())
 
 
 # test objects end #####################################################################################################
@@ -74,24 +75,24 @@ def test_differ_seconds_now_from_then(time_then):
 
 class TemplatetagsDatetimeFilterTest(TestCase):
     def test_templatetags_datetime_filter(self):
-        test1_raw_time = test_raw_time_generator(30)
-        self.assertEqual(datetime_filter(test1_raw_time), u'1分钟前')
+        test1_date_time = test_date_time_generator(30)
+        self.assertEqual(datetime_filter(test1_date_time), u'1分钟前')
 
-        test2_raw_time = test_raw_time_generator(1000)
-        self.assertEqual(datetime_filter(test2_raw_time),
-                         u'%s分钟前' % (test_differ_seconds_now_from_then(test2_raw_time) // 60))
+        test2_date_time = test_date_time_generator(1000)
+        self.assertEqual(datetime_filter(test2_date_time),
+                         u'%s分钟前' % (test_differ_seconds_now_from_then(test2_date_time) // 60))
 
-        test3_raw_time = test_raw_time_generator(10000)
-        self.assertEqual(datetime_filter(test3_raw_time),
-                         u'%s小时前' % (test_differ_seconds_now_from_then(test3_raw_time) // 3600))
+        test3_date_time = test_date_time_generator(10000)
+        self.assertEqual(datetime_filter(test3_date_time),
+                         u'%s小时前' % (test_differ_seconds_now_from_then(test3_date_time) // 3600))
 
-        test4_raw_time = test_raw_time_generator(100000)
-        self.assertEqual(datetime_filter(test4_raw_time),
-                         u'%s天前' % (test_differ_seconds_now_from_then(test4_raw_time) // 86400))
+        test4_date_time = test_date_time_generator(100000)
+        self.assertEqual(datetime_filter(test4_date_time),
+                         u'%s天前' % (test_differ_seconds_now_from_then(test4_date_time) // 86400))
 
-        test5_raw_time = test_raw_time_generator(1000000)
-        dt = datetime.datetime.fromtimestamp(test5_raw_time)
-        self.assertEqual(datetime_filter(test5_raw_time),
+        test5_date_time = test_date_time_generator(1000000)
+        dt = test5_date_time
+        self.assertEqual(datetime_filter(test5_date_time),
                          u'%s年%s月%s日' % (dt.year, dt.month, dt.day))
 
 

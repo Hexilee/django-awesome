@@ -95,7 +95,7 @@ def test_generate_new_user(token, email_num):
 
 class TestAuthHttpRequest(HttpRequest):
     def __init__(self, *args, **kwargs):
-        self.cookies = dict()
+        self.COOKIES = dict()
         self.__user__ = None
         self.auth_error = None
         super(TestAuthHttpRequest, self).__init__()
@@ -137,7 +137,7 @@ class MyAuthMiddlewareTest(TestCase):
         test2_user.save()
 
         request2 = TestAuthHttpRequest()
-        request2.cookies[TOKEN_NAME] = token_generator('password1')
+        request2.COOKIES[TOKEN_NAME] = token_generator('password1')
         test_auth_middleware(request2)
 
         self.assertEqual(request2.__user__, None)
@@ -155,7 +155,7 @@ class MyAuthMiddlewareTest(TestCase):
         test3_user.save()
 
         request3 = TestAuthHttpRequest()
-        request3.cookies[TOKEN_NAME] = test3_token.value
+        request3.COOKIES[TOKEN_NAME] = test3_token.value
         test_auth_middleware(request3)
 
         self.assertEqual(request3.__user__, None)
@@ -173,7 +173,7 @@ class MyAuthMiddlewareTest(TestCase):
         test4_user.save()
 
         request4 = TestAuthHttpRequest()
-        request4.cookies[TOKEN_NAME] = test4_token.value
+        request4.COOKIES[TOKEN_NAME] = test4_token.value
         test_auth_middleware(request4)
 
         self.assertEqual(request4.__user__, None)
@@ -192,7 +192,7 @@ class MyAuthMiddlewareTest(TestCase):
         test5_user.save()
 
         request5 = TestAuthHttpRequest()
-        request5.cookies[TOKEN_NAME] = test5_token.value
+        request5.COOKIES[TOKEN_NAME] = test5_token.value
         test_auth_middleware(request5)
 
         self.assertEqual(request5.__user__, None)
@@ -216,7 +216,7 @@ class MyAuthMiddlewareTest(TestCase):
         test6_user.save()
 
         request6 = TestAuthHttpRequest()
-        request6.cookies[TOKEN_NAME] = test6_token.value
+        request6.COOKIES[TOKEN_NAME] = test6_token.value
         test_auth_middleware(request6)
 
         self.assertEqual(request6.__user__, None)
@@ -234,7 +234,7 @@ class MyAuthMiddlewareTest(TestCase):
         test7_user.save()
 
         request7 = TestAuthHttpRequest()
-        request7.cookies[TOKEN_NAME] = test7_token.value
+        request7.COOKIES[TOKEN_NAME] = test7_token.value
         test_auth_middleware(request7)
 
         self.assertEqual(request7.auth_error, None)

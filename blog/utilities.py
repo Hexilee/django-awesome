@@ -63,8 +63,3 @@ def get_page_index(page_str):
         p = 1
     return p
 
-
-if __name__ == '__main__':
-    import doctest
-
-    doctest.testmod()
