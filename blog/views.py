@@ -19,7 +19,7 @@ def index(request):
         page = Page(num, page_index, 8)
         page_json = json.dumps(page, ensure_ascii=False, default=lambda obj: obj.__dict__)
         if num == 0:
-            return render(request, 'index.html',
+            return render(request, 'blog/index.html',
                           {'page': page_json, 'blogs': (), 'user': request.__user__})
         blogs = Blogs.objects.order_by('-created_at')[page.offset: page.ceiling]
         return render(request, 'blog/index.html',

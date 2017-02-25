@@ -1,15 +1,17 @@
 from django.test import TestCase
 from django.utils import timezone
 from django.core.urlresolvers import reverse
+from django.core import serializers
 import datetime
 import hashlib
 import time
-
+import json
 # Create your tests here.
 from django_awesome.settings import EXPIRE_TIME
 from .models import auth, Blogs, Comments
 from .templatetags.blog_filter import datetime_filter
 from .utilities import Page, get_page_index
+from .views import index, get_blog
 
 
 class BlogsAndCommentsModelsTest(TestCase):
@@ -46,8 +48,51 @@ class BlogsAndCommentsModelsTest(TestCase):
 
 
 class IndexViewTest(TestCase):
-    def test_index_status_code(self):
-        pass
+    def test_index_view_1(self):
+        # test1, no item
+        response = self.client.get('/blog/')
+        self.assertEqual(response.status_code, 200)
+
+        resp_dict = response.context
+
+        page = json.loads(resp_dict['page'])
+        self.assertEqual(page, {'ceiling': 0,
+                                'has_next': False,
+                                'has_previous': False,
+                                'item_count': 0,
+                                'offset': 0,
+                                'page_count': 0,
+                                'page_index': 1,
+                                'page_size': 8})
+
+    def test_index_view_2(self):
+        # test2, there are items, but no 'page' parm
+        # create blogs
+        test_token = auth.models.Tokens(created_at=timezone.now(), expired_at=timezone.now(), user_email='email',
+                                        value='value')
+        test_token.save()
+        test_user = auth.models.Users(name='Robot', email='email', password='test', created_at=timezone.now(),
+                                      image='image',
+                                      current_token=test_token)
+        test_user.save()
+
+        for i in range(9):
+            Blogs.objects.create(user=test_user, name='test', summary='test', content='test', created_at=timezone.now())
+        ############################################################
+        response = self.client.get('/blog/')
+        self.assertEqual(response.status_code, 200)
+
+        resp_dict = response.context
+
+        page = json.loads(resp_dict['page'])
+        self.assertEqual(page, {'ceiling': 8,
+                                'has_next': True,
+                                'has_previous': False,
+                                'item_count': 10,
+                                'offset': 0,
+                                'page_count': 2,
+                                'page_index': 1,
+                                'page_size': 8})
 
 
 class BlogViewTest(TestCase):
