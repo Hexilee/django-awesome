@@ -6,7 +6,7 @@ from django.http.response import HttpResponse
 import datetime
 import hashlib
 # Create your tests here.
-from .views import token_generator
+from .utilites import token_generator
 from .models import Users, Tokens
 from .middlewares import BasicMiddleware, AuthMiddleware
 from django_awesome.settings import EXPIRE_TIME, TOKEN_NAME

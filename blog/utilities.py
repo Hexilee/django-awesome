@@ -63,3 +63,8 @@ def get_page_index(page_str):
         p = 1
     return p
 
+
+def text_to_html(text):
+    lines = map(lambda s: '<p>%s</p>' % s.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;'),
+                filter(lambda s: s.strip() != '', text.split('\n')))
+    return ''.join(lines)
