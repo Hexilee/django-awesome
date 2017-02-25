@@ -1,4 +1,4 @@
-{% extends '__base__.html' %}
+{% extends 'blog/__base__.html' %}
 
 {% block title %}日志{% endblock %}
 
@@ -10,7 +10,7 @@
             var vm = new Vue({
                 el: '#vm',
                 data: {
-                    page:{{ data.page }}  // page 为 json？
+                    page: {{ page|safe }}  // page 为 json？
                 }
             });
             $('#loading').hide();

@@ -35,7 +35,10 @@ class AuthMiddleware(BasicMiddleware):
         request.__user__ = None
         request.auth_error = None
         # get token
-        token_value = request.cookies.get(TOKEN_NAME)
+        if hasattr(request, 'cookies'):
+            token_value = request.cookies.get(TOKEN_NAME)
+        else:
+            token_value = None
         if token_value:
             tokens = models.Tokens.objects.filter(value=token_value)
             # if token is valid

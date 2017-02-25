@@ -8,6 +8,7 @@ import time
 from django_awesome.settings import EXPIRE_TIME
 from .models import auth, Blogs, Comments
 from .templatetags.blog_filter import datetime_filter
+from .utilities import Page, get_page_index
 
 
 class BlogsAndCommentsModelsTest(TestCase):
@@ -92,3 +93,42 @@ class TemplatetagsDatetimeFilterTest(TestCase):
         dt = datetime.datetime.fromtimestamp(test5_raw_time)
         self.assertEqual(datetime_filter(test5_raw_time),
                          u'%s年%s月%s日' % (dt.year, dt.month, dt.day))
+
+
+class TestApisPage(TestCase):
+    def test_api_page(self):
+        # test 1, page_index < page_count
+        p1 = Page(100, 1)
+        self.assertEqual(p1.page_count, 13)
+        self.assertEqual(p1.offset, 0)
+        self.assertEqual(p1.ceiling, 8)
+
+        # test2, page_index > page_count
+        p2 = Page(91, 11, 10)
+        self.assertEqual(p2.page_count, 10)
+        self.assertEqual(p2.offset, 90)
+        self.assertEqual(p2.ceiling, 91)
+        self.assertEqual(p2.page_index, 10)
+
+        # test3, page_index == page_count
+        p3 = Page(91, 10, 10)
+        self.assertEqual(p3.page_count, 10)
+        self.assertEqual(p3.offset, 90)
+        self.assertEqual(p3.ceiling, 91)
+
+        # test4, item_count == 0
+        p4 = Page(0, 10, 10)
+        self.assertEqual(p4.offset, 0)
+        self.assertEqual(p4.ceiling, 0)
+        self.assertEqual(p4.page_index, 1)
+
+
+class TestGetPageIndex(TestCase):
+    def test_get_page_index(self):
+        # test1, page_str >= 1
+        test1_page_index = get_page_index('3')
+        self.assertEqual(test1_page_index, 3)
+
+        # test2, page_str < 1
+        test2_page_index = get_page_index('-2')
+        self.assertEqual(test2_page_index, 1)

@@ -31,3 +31,4 @@ class Comments(models.Model):
         return '%s:%s' % (self.blog.name, self.user.name)
 
     __repr__ = __str__
+
