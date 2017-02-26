@@ -9,7 +9,7 @@ auth = __import__('my_auth', globals(), locals())
 
 
 class Blogs(models.Model):
-    user = models.ForeignKey(auth.models.Users, on_delete=models.PROTECT)
+    user = models.ForeignKey(auth.models.Users, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     summary = models.CharField(max_length=200)
     content = models.TextField(max_length=5000)

@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.core import serializers
@@ -15,7 +15,9 @@ from .models import Users, Tokens
 
 @csrf_exempt
 def login(request):
-    pass
+    if request.method == 'GET':
+        redirect_next = request.GET.get('next', '/blog/')
+        return render(request, 'my_auth/login.html', dict(next=redirect_next))
 
 
 @csrf_exempt
@@ -55,15 +57,19 @@ def register(request):
         new_token.save()
 
         # create user
-        new_user = Users(name=name.strip(), email=email, password=sha1_password,created_at=timezone.now(),
+        new_user = Users(name=name.strip(), email=email, password=sha1_password, created_at=timezone.now(),
                          image=image_generator(email), current_token=new_token)
         new_user.save()
 
         new_user.password = '**************'
-        r = HttpResponse(serializers.serialize('json', (new_user, )))
+        r = HttpResponse(serializers.serialize('json', (new_user,)))
         r.set_cookie(TOKEN_NAME, token_value, max_age=3600 * EXPIRED_TIME, httponly=True)
         return r
 
 
 def logout(request):
-    pass
+    if request.method == 'GET':
+        token_value = request.COOKIES.get(TOKEN_NAME)
+        if token_value:
+            Tokens.objects.filter(value=token_value).delete()
+        return HttpResponseRedirect('/blog/')
