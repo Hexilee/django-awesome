@@ -47,7 +47,7 @@
     <article class="uk-article" style="margin: 10%">
         <h2>{{ blog.name }}</h2>
         <p class="uk-article-meta">发表于{{ blog.created_at|datetime_filter }}</p>
-        <p>{{ blog.html_content|safe }}</p>
+        <p>{{ blog.content|safe }}</p>
     </article>
 
     <hr class="uk-article-divider">
@@ -114,8 +114,8 @@
 <div class="uk-width-medium-1-4">
     <div class="uk-panel uk-panel-box">
         <div class="uk-text-center">
-            <img class="uk-border-circle" width="120" height="120" src="{{ blog.user_image }}">
-            <h3>{{ blog.user_name }}</h3>
+            <img class="uk-border-circle" width="120" height="120" src="{{ blog.user.image }}">
+            <h3>{{ blog.user.name }}</h3>
         </div>
     </div>
     <div class="uk-panel uk-panel-header">

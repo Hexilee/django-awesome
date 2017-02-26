@@ -50,8 +50,8 @@
                             </div>
                         </li>
                     {% else %}
-                        <li><a href={% url 'auth:login' %}><i class="uk-icon-sign-in"></i> 登陆</a></li>
-                        <li><a href={% url 'auth:logout' %}><i class="uk-icon-edit"></i> 注册</a></li>
+                        <li><a href="{% url 'auth:login' %}?next={{ request.path }}"><i class="uk-icon-sign-in"></i> 登陆</a></li>
+                        <li><a href="{% url 'auth:register' %}?next={{ request.path }}"><i class="uk-icon-edit"></i> 注册</a></li>
                     {% endif %}
                 </ul>
             </div>

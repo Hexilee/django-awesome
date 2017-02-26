@@ -1,11 +1,11 @@
 from django.utils.datastructures import MultiValueDictKeyError
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
 import json
 # Create your views here.
 from .utilities import Page, get_page_index, text_to_html
 from .models import Blogs, Comments
-from . import markdown2
 
 
 def index(request):
@@ -26,10 +26,11 @@ def index(request):
                       {'page': page_json, 'blogs': blogs, 'user': request.__user__})
 
 
+@csrf_exempt
 def get_blog(request, blog_id):
     if request.method == 'GET':
         blog = get_object_or_404(Blogs, pk=blog_id)
-        blog.html_content = markdown2.markdown(blog.content)
+        # blog.html_content = markdown2.markdown(blog.content)
         comments = Comments.objects.filter(blog_id=blog_id)
         if len(comments) == 0:
             comments = None
