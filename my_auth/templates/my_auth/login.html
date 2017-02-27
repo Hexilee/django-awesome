@@ -4,15 +4,16 @@
     <meta charset="utf-8"/>
     <title>登录 - Awesome Python Webapp</title>
     {% load staticfiles %}
-     <link rel="stylesheet" href="{% static 'blog/css/uikit.min.css' %}">
+    <link rel="stylesheet" href="{% static 'blog/css/uikit.min.css' %}">
     <link rel="stylesheet" href="{% static 'blog/css/uikit.gradient.min.css' %}">
-   <script src="{% static 'blog/js/jquery.min.js' %}"></script>
+    <script src="{% static 'blog/js/jquery.min.js' %}"></script>
     <script src="{% static 'blog/js/sha1.min.js' %}"></script>
     <script src="{% static 'blog/js/uikit.min.js' %}"></script>
     <script src="{% static 'blog/js/vue.min.js' %}"></script>
     <script src="{% static 'blog/js/awesome.js' %}"></script>
     <script>
         $(function () {
+            var $form = $('#vm');
             var vmAuth = new Vue({
                 el: '#vm',
                 data: {
@@ -23,7 +24,6 @@
                     submit: function (event) {
                         event.preventDefault();
                         var
-                            $form = $('#vm'),
                             email = this.email.trim().toLowerCase(),
                             data = {
                                 email: email,
@@ -38,14 +38,16 @@
                     }
                 }
             });
-            $('#vm').show();
+            $form.show();
+            $form.showFormError('{{ request.auth_error }}')
         });
     </script>
 </head>
 <body class="uk-height-1-1">
 <div class="uk-vertical-align uk-text-center uk-height-1-1">
     <div class="uk-vertical-align-middle" style="width: 320px">
-        <p><a href="{% url 'blog:index' %}" class="uk-icon-button"><i class="uk-icon-html5"></i></a> <a href="{% url 'blog:index' %}">Awesome Python Webapp</a>
+        <p><a href="{% url 'blog:index' %}" class="uk-icon-button"><i class="uk-icon-html5"></i></a> <a
+                href="{% url 'blog:index' %}">Awesome Python Webapp</a>
         </p>
         <form id="vm" v-on="submit: submit" class="uk-panel uk-panel-box uk-form">
             <div class="uk-alert uk-alert-danger uk-hidden"></div>
