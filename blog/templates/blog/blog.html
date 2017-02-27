@@ -8,7 +8,7 @@
 
 
     <script>
-        var comment_url = {% url 'blog:blog_comments' blog.id %};
+        var comment_url = "{% url 'blog:blog_comments' blog.id %}";
         $(function () {
             var $form = $('#form-comment');
             $form.submit(function (event) {

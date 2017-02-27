@@ -30,7 +30,7 @@
                                 password: this.password === '' ? '' : CryptoJS.SHA1(email + ':' + this.password).toString()
                             };
                         $form.postJSON('{% url 'auth:login' %}', data, function (err, result) {
-                            if (err) {
+                            if (result.error) {
                                 return $form.showFormError(result.error)
                             }
                             location.assign('{{ next }}');

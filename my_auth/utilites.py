@@ -12,5 +12,10 @@ def token_generator(password):
     return hashlib.sha1(raw.encode('utf-8')).hexdigest()
 
 
+def password_generator(raw_password):
+    new_password = '%s:%s:%s' % (SECRET_KEY, raw_password, SECRET_KEY)
+    return hashlib.sha1(new_password.encode('utf-8')).hexdigest()
+
+
 def image_generator(email):
     return 'https://www.gravatar.com/avatar/%s?d=mm&s=120' % hashlib.md5(email.encode('utf-8')).hexdigest()

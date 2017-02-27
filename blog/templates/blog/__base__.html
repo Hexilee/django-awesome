@@ -24,9 +24,9 @@
 <div data-uk-sticky style="z-index: 11">
     <nav class="uk-navbar uk-navbar-attached uk-margin-bottom ">
         <div class="uk-container uk-container-center">
-            <a href="/" class="uk-navbar-brand">今夕何夕</a>
+            <a href="{% url 'blog:index' %}" class="uk-navbar-brand">今夕何夕</a>
             <ul class="uk-navbar-nav">
-                <li data-url="blogs"><a href="/"><i class="uk-icon-home"></i> 日志</a></li>
+                <li data-url="blogs"><a href="{% url 'blog:index' %}"><i class="uk-icon-home"></i> 日志</a></li>
                 <li><a target="_blank"
                        href="http://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000"><i
                         class="uk-icon-book"></i> 教程</a></li>
@@ -40,11 +40,11 @@
                             <a href="#0"><i class="uk-icon-user"></i> {{ user.name }}</a>
                             <div class="uk-dropdown uk-dropdown-navbar">
                                 <ul class="uk-nav uk-nav-navbar">
-                                    <li><a href="{% url 'auth:logout' %}"><i class="uk-icon-sign-out"></i> 登出</a></li>
+                                    <li><a href="{% url 'auth:logout' %}?next={{ request.path }}"><i class="uk-icon-sign-out"></i> 登出</a></li>
                                     {% if user.admin %}
-                                        <li><a href="/admin/blog/blogs"><i class="uk-icon-sign-out"></i> 管理日志</a></li>
-                                        <li><a href="/admin/blog/comments"><i class="uk-icon-sign-out"></i> 管理评论</a></li>
-                                        <li><a href="/admin/my_auth/users"><i class="uk-icon-sign-out"></i> 管理用户</a></li>
+                                        <li><a href="/admin/blog/blogs" target="_blank"><i class="uk-icon-sign-out"></i> 管理日志</a></li>
+                                        <li><a href="/admin/blog/comments" target="_blank"><i class="uk-icon-sign-out"></i> 管理评论</a></li>
+                                        <li><a href="/admin/my_auth/users" target="_blank"><i class="uk-icon-sign-out"></i> 管理用户</a></li>
                                     {% endif %}
                                 </ul>
                             </div>

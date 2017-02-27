@@ -5,11 +5,13 @@ from django.http.request import HttpRequest
 from django.http.response import HttpResponse
 import datetime
 import hashlib
+import json
 # Create your tests here.
 from .utilites import token_generator
 from .models import Users, Tokens
 from .middlewares import BasicMiddleware, AuthMiddleware
 from django_awesome.settings import EXPIRED_TIME, TOKEN_NAME
+from .views import register, login, logout
 
 
 class UsersAndTokensModelsTest(TestCase):
@@ -243,8 +245,29 @@ class MyAuthMiddlewareTest(TestCase):
 
 
 class LoginViewTest(TestCase):
-    def test_login_status_code(self):
-        pass
+    def test_login_view_1_2(self):
+        # test1, get, no next
+        response1 = self.client.get(reverse('auth:login'))
+        self.assertEqual(response1.status_code, 200)
+        self.assertEqual(response1.context['next'], '/blog/')
+
+        # test2, get, has next
+        response2 = self.client.get(reverse('auth:login') + '?next=/blog/10')
+        self.assertEqual(response2.status_code, 200)
+        self.assertEqual(response2.context['next'], '/blog/10')
+
+    def test_login_view_3_4(self):
+        # test3, post, no data input
+        response3 = self.client.post(reverse('auth:login'))
+        self.assertEqual(response3.status_code, 200)
+        self.assertEqual(json.loads(response3.content.decode('utf-8')), {'error': '没有数据输入！'})
+
+        # test4, post, invalid email
+        test4_data = json.dumps({'email': '3131da@as', 'password': 'e9a14fb4e17114337440905576c363efeb031af3'},
+                                ensure_ascii=False)
+        response4 = self.client.post(reverse('auth:login'), data=test4_data, content_type='application/json')
+        self.assertEqual(response4.status_code, 200)
+        self.assertEqual(json.loads(response4.content.decode('utf-8')), {'error': '请输入正确的邮箱格式'})
 
 
 class RegisterViewTest(TestCase):
