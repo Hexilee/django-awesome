@@ -30,7 +30,7 @@ def login(request):
         if not email or not _RE_EMAIL.match(email):
             return HttpResponse(json.dumps({'error': '请输入正确的邮箱格式'}, ensure_ascii=False))
         if not password or not _RE_SHA1.match(password):
-            raise HttpResponse(json.dumps({'error': '密码加密错误，请刷新重试'}, ensure_ascii=False))
+            return HttpResponse(json.dumps({'error': '密码加密错误，请刷新重试'}, ensure_ascii=False))
 
         sha1_password = password_generator(password)
         users = Users.objects.filter(email=email)
@@ -42,7 +42,7 @@ def login(request):
             return HttpResponse(json.dumps({'error': '密码错误'}, ensure_ascii=False))
 
         token_value = token_generator(sha1_password)
-        new_token = Tokens(created_at=timezone.now(),
+        new_token = Tokens(
                            expired_at=timezone.now() + datetime.timedelta(hours=EXPIRED_TIME),
                            user_email=email,
                            value=token_value)
@@ -66,7 +66,7 @@ def register(request):
         try:
             dict_data = json.loads(request.body.decode('utf-8'), )
         except Exception:
-            raise ValueError('No data posted ')
+            return HttpResponse(json.dumps({'error': '没有数据输入！'}, ensure_ascii=False))
 
         email = dict_data.get('email')
         name = dict_data.get('name')
@@ -87,14 +87,14 @@ def register(request):
 
         # get token
         token_value = token_generator(sha1_password)
-        new_token = Tokens(created_at=timezone.now(),
+        new_token = Tokens(
                            expired_at=timezone.now() + datetime.timedelta(hours=EXPIRED_TIME),
                            user_email=email,
                            value=token_value)
         new_token.save()
 
         # create user
-        new_user = Users(name=name.strip(), email=email, password=sha1_password, created_at=timezone.now(),
+        new_user = Users(name=name.strip(), email=email, password=sha1_password,
                          image=image_generator(email), current_token=new_token)
         new_user.save()
 

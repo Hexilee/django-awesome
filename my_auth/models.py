@@ -6,7 +6,7 @@ from django.db import models
 
 class Tokens(models.Model):
     value = models.CharField(max_length=100)
-    created_at = models.DateTimeField('date created')
+    created_at = models.DateTimeField(verbose_name='date created', auto_now_add=True)
     expired_at = models.DateTimeField('date expired')
     user_email = models.CharField(max_length=50)
 
@@ -23,7 +23,7 @@ class Users(models.Model):
     image = models.CharField(max_length=150)
     is_active = models.BooleanField(default=True)
     admin = models.BooleanField(default=False)
-    created_at = models.DateTimeField('date created')
+    created_at = models.DateTimeField(verbose_name='date created', auto_created=True)
     current_token = models.ForeignKey(Tokens, on_delete=models.CASCADE)
 
     def __str__(self):

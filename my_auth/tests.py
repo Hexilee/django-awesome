@@ -7,7 +7,7 @@ import datetime
 import hashlib
 import json
 # Create your tests here.
-from .utilites import token_generator
+from .utilites import token_generator, password_generator
 from .models import Users, Tokens
 from .middlewares import BasicMiddleware, AuthMiddleware
 from django_awesome.settings import EXPIRED_TIME, TOKEN_NAME
@@ -269,7 +269,64 @@ class LoginViewTest(TestCase):
         self.assertEqual(response4.status_code, 200)
         self.assertEqual(json.loads(response4.content.decode('utf-8')), {'error': '请输入正确的邮箱格式'})
 
+        # test5, post, invalid password
+        test5_data = json.dumps({'email': 'name@qq.com', 'password': '9a14efb4e17114337440905576c'},
+                                ensure_ascii=False)
+        response5 = self.client.post(reverse('auth:login'), data=test5_data, content_type='application/json')
+        self.assertEqual(response5.status_code, 200)
+        self.assertEqual(json.loads(response5.content.decode('utf-8')), {'error': '密码加密错误，请刷新重试'})
+
+        # test6, post, invalid user
+        test6_data = json.dumps({'email': 'name@qq.com', 'password': '9a14efb4e17114337440905576c363efeb031af3'},
+                                ensure_ascii=False)
+        response6 = self.client.post(reverse('auth:login'), data=test6_data, content_type='application/json')
+        self.assertEqual(response6.status_code, 200)
+        self.assertEqual(json.loads(response6.content.decode('utf-8')), {'error': '账号邮箱不存在'})
+
+        # test7, post, wrong password
+        new_token = Tokens(
+            expired_at=timezone.now() + datetime.timedelta(hours=EXPIRED_TIME),
+            value=token_generator('9a14efb4e17114337440905576c363efeb031af3'),
+            user_email=test_email(1)
+        )
+        new_token.save()
+
+        new_user = test_generate_new_user(token=new_token, email_num=1)
+        new_user.password = password_generator('9a14efb4e17114337440905576c363efeb031af3')
+        new_user.save()
+
+        test7_data = json.dumps({'email': test_email(1), 'password': '7440905576c363efeb031af39a14efb4e1711433'},
+                                ensure_ascii=False)
+        response7 = self.client.post(reverse('auth:login'), data=test7_data, content_type='application/json')
+        self.assertEqual(response7.status_code, 200)
+        self.assertEqual(json.loads(response7.content.decode('utf-8')), {'error': '密码错误'})
+
+        # test8, post, right password
+        test8_data = json.dumps({'email': test_email(1), 'password': '9a14efb4e17114337440905576c363efeb031af3'},
+                                ensure_ascii=False)
+        raw_response8 = self.client.post(reverse('auth:login'), data=test8_data, content_type='application/json')
+
+        self.assertEqual(raw_response8.status_code, 200)
+        response8 = json.loads(raw_response8.content.decode('utf-8'))
+
+        self.assertEqual(response8[0]['fields']['password'], '***************')
+
+
+
 
 class RegisterViewTest(TestCase):
-    def test_Register_status_code(self):
-        pass
+    def test_register_view_1_2(self):
+        # test1, get, no next
+        response1 = self.client.get(reverse('auth:register'))
+        self.assertEqual(response1.status_code, 200)
+        self.assertEqual(response1.context['next'], '/blog/')
+        # test2, get, has next
+        response2 = self.client.get(reverse('auth:register') + '?next=/blog/10')
+        self.assertEqual(response2.status_code, 200)
+        self.assertEqual(response2.context['next'], '/blog/10')
+
+    def test_register_view_3(self):
+        # test3, post, no data input
+        response3 = self.client.post(reverse('auth:register'))
+        self.assertEqual(response3.status_code, 200)
+        self.assertEqual(json.loads(response3.content.decode('utf-8')), {'error': '没有数据输入！'})
