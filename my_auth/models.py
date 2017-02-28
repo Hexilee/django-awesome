@@ -23,7 +23,7 @@ class Users(models.Model):
     image = models.CharField(max_length=150)
     is_active = models.BooleanField(default=True)
     admin = models.BooleanField(default=False)
-    created_at = models.DateTimeField(verbose_name='date created', auto_created=True)
+    created_at = models.DateTimeField(verbose_name='date created', auto_now_add=True)
     current_token = models.ForeignKey(Tokens, on_delete=models.CASCADE)
 
     def __str__(self):

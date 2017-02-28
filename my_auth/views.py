@@ -77,7 +77,7 @@ def register(request):
         if not name or not name.strip():
             return HttpResponse(json.dumps({'error': '请输入正确的姓名'}, ensure_ascii=False))
         if not password or not _RE_SHA1.match(password):
-            raise ValueError('password')
+            return HttpResponse(json.dumps({'error': '密码加密错误，请刷新重试'}, ensure_ascii=False))
         users = Users.objects.filter(email=email)
         if len(users) > 0:
             return HttpResponse(json.dumps({'error': '该邮箱已被注册'}, ensure_ascii=False))

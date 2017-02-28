@@ -256,7 +256,7 @@ class LoginViewTest(TestCase):
         self.assertEqual(response2.status_code, 200)
         self.assertEqual(response2.context['next'], '/blog/10')
 
-    def test_login_view_3_4(self):
+    def test_login_view_3_8(self):
         # test3, post, no data input
         response3 = self.client.post(reverse('auth:login'))
         self.assertEqual(response3.status_code, 200)
@@ -312,7 +312,13 @@ class LoginViewTest(TestCase):
         self.assertEqual(response8[0]['fields']['password'], '***************')
 
 
+# test_objects for RegisterView #########################################################################################
 
+def test_data_generator(email, password, name):
+    return json.dumps(dict(email=email, password=password, name=name), ensure_ascii=False)
+
+
+# end objects
 
 class RegisterViewTest(TestCase):
     def test_register_view_1_2(self):
@@ -325,8 +331,54 @@ class RegisterViewTest(TestCase):
         self.assertEqual(response2.status_code, 200)
         self.assertEqual(response2.context['next'], '/blog/10')
 
-    def test_register_view_3(self):
+    def test_register_view_3_(self):
         # test3, post, no data input
         response3 = self.client.post(reverse('auth:register'))
         self.assertEqual(response3.status_code, 200)
         self.assertEqual(json.loads(response3.content.decode('utf-8')), {'error': '没有数据输入！'})
+
+        # test4, post, invalid email
+        response4 = self.client.post(reverse('auth:register'),
+                                     data=test_data_generator(email='name@qq',
+                                                              password='9a14efb4e17114337440905576c363efeb031af3',
+                                                              name='西西'),
+                                     content_type='application/json')
+        self.assertEqual(response4.status_code, 200)
+        self.assertEqual(json.loads(response4.content.decode('utf-8')), {'error': '请输入正确的邮箱格式'})
+
+        # test5, post, invalid name
+        response5 = self.client.post(reverse('auth:register'),
+                                     data=test_data_generator(email='name@qq.com',
+                                                              password='9a14efb4e17114337440905576c363efeb031af3',
+                                                              name='  '),
+                                     content_type='application/json')
+        self.assertEqual(response5.status_code, 200)
+        self.assertEqual(json.loads(response5.content.decode('utf-8')), {'error': '请输入正确的姓名'})
+
+        # test6, post, invalid password
+        response6 = self.client.post(reverse('auth:register'),
+                                     data=test_data_generator(email='name@qq.com',
+                                                              password='9a14efb4e171143374409055',
+                                                              name='西西'),
+                                     content_type='application/json')
+        self.assertEqual(response6.status_code, 200)
+        self.assertEqual(json.loads(response6.content.decode('utf-8')), {'error': '密码加密错误，请刷新重试'})
+
+        # test7, post, valid data
+        response7 = self.client.post(reverse('auth:register'),
+                                     data=test_data_generator(email=test_email(1),
+                                                              password='9a14efb4e17114337440905576c363efeb031af3',
+                                                              name='西西'),
+                                     content_type='application/json')
+        self.assertEqual(response7.status_code, 200)
+        self.assertEqual(json.loads(response7.content.decode('utf-8'))[0]['fields']['password'], '**************')
+
+        # test8, post, repeated email
+        response8 = self.client.post(reverse('auth:register'),
+                                     data=test_data_generator(email=test_email(1),
+                                                              password='9a14efb4e17114337440905576c363efeb031af3',
+                                                              name='西西'),
+                                     content_type='application/json')
+        self.assertEqual(response8.status_code, 200)
+        self.assertEqual(json.loads(response8.content.decode('utf-8')), {'error': '该邮箱已被注册'})
+
