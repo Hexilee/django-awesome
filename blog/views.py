@@ -39,3 +39,5 @@ def get_blog(request, blog_id):
                 c.html_content = text_to_html(c.content)
         context = dict(blog=blog, comments=comments, user=request.__user__)
         return render(request, 'blog/blog.html', context=context)
+
+

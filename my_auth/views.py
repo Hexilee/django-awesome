@@ -23,7 +23,7 @@ def login(request):
         try:
             dict_data = json.loads(request.body.decode('utf-8'), )
         except Exception:
-            return HttpResponse(json.dumps({'error': '没有数据输入！'}, ensure_ascii=False))
+            return HttpResponse(json.dumps({'error': '数据格式错误！'}, ensure_ascii=False))
         email = dict_data.get('email')
         password = dict_data.get('password')
 
@@ -66,7 +66,7 @@ def register(request):
         try:
             dict_data = json.loads(request.body.decode('utf-8'), )
         except Exception:
-            return HttpResponse(json.dumps({'error': '没有数据输入！'}, ensure_ascii=False))
+            return HttpResponse(json.dumps({'error': '数据格式错误！'}, ensure_ascii=False))
 
         email = dict_data.get('email')
         name = dict_data.get('name')

@@ -18,8 +18,8 @@
                     return $form.showFormError('请输入评论内容！');
                 }
                 $form.postJSON(comment_url, {content: content}, function (err, result) {
-                    if (err) {
-                        return $form.showFormError(err);
+                    if (result.error) {
+                        return $form.showFormError(result.error);
                     }
                     refresh();
                 });
@@ -29,9 +29,9 @@
             $delete.click(function (event) {
                 event.preventDefault();
                 if (confirm('确定要删除这条评论？删除后不可恢复！')) {
-                    postJSON({% url 'blog:index' %} +'/' + this.name + '/comments/delete', function (err, result) {
-                        if (err) {
-                            $form.showFormError('删除失败！')
+                    postJSON("{% url 'blog:index' %}"+ this.name + "/comments/delete", function (err, result) {
+                        if (result.error) {
+                            $form.showFormError(result.error)
                         }
                         refresh();
                     });
@@ -86,8 +86,8 @@
             <article class="uk-comment">
                 <header class="uk-comment-header">
                     <img class="uk-comment-avatar uk-border-circle" width="50" height="50"
-                         src="{{ comment.user_image }}">
-                    <h4 class="uk-comment-title">{{ comment.user_name }} {% if comment.user_id == blog.user_id %}
+                         src="{{ comment.user.image }}">
+                    <h4 class="uk-comment-title">{{ comment.user.name }} {% if comment.user_id == blog.user_id %}
                         (作者)
                     {% endif %}</h4>
                     <p class="uk-comment-meta">{{ comment.created_at|datetime_filter }}</p>

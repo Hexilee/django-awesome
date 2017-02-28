@@ -260,7 +260,7 @@ class LoginViewTest(TestCase):
         # test3, post, no data input
         response3 = self.client.post(reverse('auth:login'))
         self.assertEqual(response3.status_code, 200)
-        self.assertEqual(json.loads(response3.content.decode('utf-8')), {'error': '没有数据输入！'})
+        self.assertEqual(json.loads(response3.content.decode('utf-8')), {'error': '数据格式错误！'})
 
         # test4, post, invalid email
         test4_data = json.dumps({'email': '3131da@as', 'password': 'e9a14fb4e17114337440905576c363efeb031af3'},
@@ -335,7 +335,7 @@ class RegisterViewTest(TestCase):
         # test3, post, no data input
         response3 = self.client.post(reverse('auth:register'))
         self.assertEqual(response3.status_code, 200)
-        self.assertEqual(json.loads(response3.content.decode('utf-8')), {'error': '没有数据输入！'})
+        self.assertEqual(json.loads(response3.content.decode('utf-8')), {'error': '数据格式错误！'})
 
         # test4, post, invalid email
         response4 = self.client.post(reverse('auth:register'),
