@@ -31,7 +31,7 @@ def get_blog(request, blog_id):
     if request.method == 'GET':
         blog = get_object_or_404(Blogs, pk=blog_id)
         # blog.html_content = markdown2.markdown(blog.content)
-        comments = Comments.objects.filter(blog_id=blog_id)
+        comments = Comments.objects.filter(blog_id=blog_id).exclude(is_deleted=True)
         if len(comments) == 0:
             comments = None
         else:

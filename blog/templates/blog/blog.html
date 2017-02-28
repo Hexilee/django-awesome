@@ -29,7 +29,7 @@
             $delete.click(function (event) {
                 event.preventDefault();
                 if (confirm('确定要删除这条评论？删除后不可恢复！')) {
-                    postJSON("{% url 'blog:index' %}"+ this.name + "/comments/delete", function (err, result) {
+                    postJSON("{% url 'blog:index' %}" + this.name + "/comments/delete/", function (err, result) {
                         if (result.error) {
                             $form.showFormError(result.error)
                         }
@@ -43,88 +43,89 @@
 {% endblock %}
 
 {% block content %}
-<div class="uk-width-medium-3-4">
-    <article class="uk-article" style="margin: 10%">
-        <h2>{{ blog.name }}</h2>
-        <p class="uk-article-meta">发表于{{ blog.created_at|datetime_filter }}</p>
-        <p>{{ blog.content|safe }}</p>
-    </article>
-
-    <hr class="uk-article-divider">
-
-    {% if user %}
-        <h3>发表评论</h3>
-
-        <article class="uk-comment">
-            <header class="uk-comment-header">
-                <img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="{{ user.image }}">
-                <h4 class="uk-comment-title">{{ user.name }}</h4>
-            </header>
-            <div class="uk-comment-body">
-                <form id="form-comment" class="uk-form">
-                    <div class="uk-alert uk-alert-danger uk-hidden"></div>
-                    <div class="uk-form-row">
-                        <textarea rows="6" placeholder="说点什么吧" style="width:100%;resize:none;"></textarea>
-                    </div>
-                    <div class="uk-form-row">
-                        <button type="submit" class="uk-button uk-button-primary"><i class="uk-icon-comment"></i>
-                            发表评论
-                        </button>
-                    </div>
-                </form>
-            </div>
+    <div class="uk-width-medium-3-4">
+        <article class="uk-article" style="margin: 10%">
+            <h2>{{ blog.name }}</h2>
+            <p class="uk-article-meta">发表于{{ blog.created_at|datetime_filter }}</p>
+            <p>{{ blog.content|safe }}</p>
         </article>
 
         <hr class="uk-article-divider">
-    {% endif %}
-    {% if not comments is None %}
-        <h3>最新评论</h3>
 
-        <ul class="uk-comment-list">
-        {% for comment in comments %}
-        <li>
+        {% if user %}
+            <h3>发表评论</h3>
+
             <article class="uk-comment">
                 <header class="uk-comment-header">
-                    <img class="uk-comment-avatar uk-border-circle" width="50" height="50"
-                         src="{{ comment.user.image }}">
-                    <h4 class="uk-comment-title">{{ comment.user.name }} {% if comment.user_id == blog.user_id %}
-                        (作者)
-                    {% endif %}</h4>
-                    <p class="uk-comment-meta">{{ comment.created_at|datetime_filter }}</p>
-                    {% if user.admin or user.id == comment.user_id %}
-                        <a target="_blank" href="#0" id="del-comment" name="{{ comment.id }}"><p
-                                class="uk-comment-meta">
-                            删除</p></a>
-                    {% endif %}
+                    <img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="{{ user.image }}">
+                    <h4 class="uk-comment-title">{{ user.name }}</h4>
                 </header>
                 <div class="uk-comment-body">
-                    {{ comment.html_content|safe }}
+                    <form id="form-comment" class="uk-form">
+                        <div class="uk-alert uk-alert-danger uk-hidden"></div>
+                        <div class="uk-form-row">
+                            <textarea rows="6" placeholder="说点什么吧" style="width:100%;resize:none;"></textarea>
+                        </div>
+                        <div class="uk-form-row">
+                            <button type="submit" class="uk-button uk-button-primary"><i class="uk-icon-comment"></i>
+                                发表评论
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </article>
-        </li>
-    {% endfor %}
-    {% endif %}
-    {% if comments is None %}
-        <p>还没有人评论...</p>
-    {% endif %}
-    </ul>
 
-</div>
+            <hr class="uk-article-divider">
+        {% endif %}
+        {% if not comments is None %}
+            <h3>最新评论</h3>
 
-<div class="uk-width-medium-1-4">
-    <div class="uk-panel uk-panel-box">
-        <div class="uk-text-center">
-            <img class="uk-border-circle" width="120" height="120" src="{{ blog.user.image }}">
-            <h3>{{ blog.user.name }}</h3>
+            <ul class="uk-comment-list">
+            {% for comment in comments %}
+                <li>
+                    <article class="uk-comment">
+                        <header class="uk-comment-header">
+                            <img class="uk-comment-avatar uk-border-circle" width="50" height="50"
+                                 src="{{ comment.user.image }}">
+                            <h4 class="uk-comment-title">{{ comment.user.name }}
+                                {% if comment.user_id == blog.user_id %}
+                                    (作者)
+                                {% endif %}</h4>
+                            <p class="uk-comment-meta">{{ comment.created_at|datetime_filter }}
+                                {% if user.admin or user.id == comment.user_id %}
+                                    <a target="_blank" href="#0" id="del-comment" name="{{ comment.id }}"
+                                       class="uk-comment-meta">
+                                        删除</a></p>
+                                {% endif %}
+                        </header>
+                        <div class="uk-comment-body">
+                            {{ comment.html_content|safe }}
+                        </div>
+                    </article>
+                </li>
+            {% endfor %}
+        {% endif %}
+        {% if comments is None %}
+            <p>还没有人评论...</p>
+        {% endif %}
+        </ul>
+
+    </div>
+
+    <div class="uk-width-medium-1-4">
+        <div class="uk-panel uk-panel-box">
+            <div class="uk-text-center">
+                <img class="uk-border-circle" width="120" height="120" src="{{ blog.user.image }}">
+                <h3>{{ blog.user.name }}</h3>
+            </div>
+        </div>
+        <div class="uk-panel uk-panel-header">
+            <h3 class="uk-panel-title">友情链接</h3>
+            <ul class="uk-list uk-list-line">
+                <li><i class="uk-icon-link"></i> <a href="#">编程</a></li>
+                <li><i class="uk-icon-link"></i> <a href="#">思考</a></li>
+                <li><i class="uk-icon-link"></i> <a href="#">读书</a></li>
+            </ul>
         </div>
     </div>
-    <div class="uk-panel uk-panel-header">
-        <h3 class="uk-panel-title">友情链接</h3>
-        <ul class="uk-list uk-list-line">
-            <li><i class="uk-icon-link"></i> <a href="#">编程</a></li>
-            <li><i class="uk-icon-link"></i> <a href="#">思考</a></li>
-            <li><i class="uk-icon-link"></i> <a href="#">读书</a></li>
-        </ul>
-    </div>
-</div>
 {% endblock %}

@@ -26,6 +26,7 @@ class Comments(models.Model):
     blog = models.ForeignKey(Blogs, on_delete=models.PROTECT)
     content = models.TextField(max_length=2000)
     created_at = models.DateTimeField(verbose_name='date created', auto_now_add=True)
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return '%s:%s' % (self.blog.name, self.user.name)

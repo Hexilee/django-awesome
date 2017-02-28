@@ -239,7 +239,7 @@ class MyAuthMiddlewareTest(TestCase):
         request7.COOKIES[TOKEN_NAME] = test7_token.value
         test_auth_middleware(request7)
 
-        self.assertEqual(request7.auth_error, None)
+        self.assertEqual(request7.auth_error, '您已登录~')
         self.assertEqual(request7.__user__.email, test7_user.email)
         self.assertEqual(request7.__user__.password, '**********')
 
@@ -381,4 +381,3 @@ class RegisterViewTest(TestCase):
                                      content_type='application/json')
         self.assertEqual(response8.status_code, 200)
         self.assertEqual(json.loads(response8.content.decode('utf-8')), {'error': '该邮箱已被注册'})
-

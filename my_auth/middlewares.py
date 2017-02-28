@@ -55,6 +55,7 @@ class AuthMiddleware(BasicMiddleware):
                             if user.current_token == token:
                                 user.password = '**********'
                                 request.__user__ = user
+                                request.auth_error = '您已登录~'
                             else:
                                 request.auth_error = '你的账号已在别处登录'
                         else:
