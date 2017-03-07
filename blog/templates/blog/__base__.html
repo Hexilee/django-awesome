@@ -6,6 +6,7 @@
     {% block meta %}<!-- block meta  -->{% endblock %}
     <title>{% block title %} ? {% endblock %} - 今夕何夕</title>
     {% load staticfiles %}
+    <link rel="icon" href="{% static 'blog/img/favicon.ico' %}">
     <link rel="stylesheet" href="{% static 'blog/css/uikit.min.css' %}">
     <link rel="stylesheet" href="{% static 'blog/css/awesome.css' %}"/>
     <link rel="stylesheet" href="{% static 'blog/css/components/sticky.css' %}">
@@ -42,9 +43,9 @@
                                 <ul class="uk-nav uk-nav-navbar">
                                     <li><a href="{% url 'auth:logout' %}?next={{ request.path }}"><i class="uk-icon-sign-out"></i> 登出</a></li>
                                     {% if user.admin %}
-                                        <li><a href="/admin/blog/blogs" target="_blank"><i class="uk-icon-sign-out"></i> 管理日志</a></li>
-                                        <li><a href="/admin/blog/comments" target="_blank"><i class="uk-icon-sign-out"></i> 管理评论</a></li>
-                                        <li><a href="/admin/my_auth/users" target="_blank"><i class="uk-icon-sign-out"></i> 管理用户</a></li>
+                                        <li><a href="/admin/blog/blogs/" target="_blank"><i class="uk-icon-sign-out"></i> 管理日志</a></li>
+                                        <li><a href="/admin/blog/comments/" target="_blank"><i class="uk-icon-sign-out"></i> 管理评论</a></li>
+                                        <li><a href="/admin/my_auth/users/" target="_blank"><i class="uk-icon-sign-out"></i> 管理用户</a></li>
                                     {% endif %}
                                 </ul>
                             </div>
