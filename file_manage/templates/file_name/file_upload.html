@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html class="uk-height-1-1">
+<head>
+    <meta charset="utf-8"/>
+    <title>文件上传 - Awesome Python Webapp</title>
+    {% load staticfiles %}
+    <link rel="stylesheet" href="{% static 'blog/css/uikit.min.css' %}">
+    <link rel="stylesheet" href="{% static 'blog/css/uikit.gradient.min.css' %}">
+    <script src="{% static 'blog/js/jquery.min.js' %}"></script>
+    <script src="{% static 'blog/js/sha1.min.js' %}"></script>
+    <script src="{% static 'blog/js/uikit.min.js' %}"></script>
+    <script src="{% static 'blog/js/vue.min.js' %}"></script>
+    <script src="{% static 'blog/js/awesome.js' %}"></script>
+    <script>
+
+    </script>
+</head>
+<body class="uk-height-1-1">
+<div class="uk-vertical-align uk-text-center uk-height-1-1">
+    <div class="uk-vertical-align-middle" style="width: 320px">
+        <p><a href="{% url 'blog:index' %}" class="uk-icon-button"><i class="uk-icon-html5"></i></a> <a
+                href="{% url 'blog:index' %}">Awesome Python Webapp</a>
+        </p>
+        <form id="vm" class="uk-panel uk-panel-box uk-form" enctype="multipart/form-data" method="post"
+              action="{% url 'file:upload' %}">
+            <input type="text" value="{{ next }}" name="next" style="visibility: hidden"/>
+            <div class="uk-form-row">
+                <label class="uk-width-1-1 uk-button uk-button-primary uk-button-large" for="xFile"><i
+                    class="uk-icon-sign-in"></i> 选择文件
+                </label>
+                <input type="file" name="file" id="xFile" style="position:absolute;clip:rect(0 0 0 0);">
+            </div>
+            <div class="uk-form-row">
+                <button type="submit" class="uk-width-1-1 uk-button uk-button-primary uk-button-large"><i
+                        class="uk-icon-sign-in"></i> 上传
+                </button>
+            </div>
+            <div class="uk-form-row">
+                <a class="uk-width-1-1 uk-button uk-button-primary uk-button-large" href="{% url 'auth:register' %}"><i
+                        class="uk-icon-sign-in"></i> 注册
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

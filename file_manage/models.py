@@ -6,6 +6,7 @@ from .utilities import id_generator, uuid_generator
 
 class File(models.Model):
     id = models.CharField(max_length=50, primary_key=True, default=id_generator(uuid_generator()))
+    admin_email = models.CharField(max_length=50)
     name = models.CharField(max_length=50)
     path = models.CharField(max_length=100)
     upload_at = models.DateTimeField(verbose_name='Uploaded at', auto_now_add=True)

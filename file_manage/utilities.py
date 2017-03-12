@@ -9,7 +9,7 @@ def id_generator(student_id):
 
 
 def uuid_generator():
-    return uuid.uuid4()
+    return str(uuid.uuid4())
 
 
 # generator binary stream
